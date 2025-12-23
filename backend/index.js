@@ -4,6 +4,7 @@ import connectDb from './config/connectDb.js';
 import cookieParser from 'cookie-parser';
 import authRouter from './route/authRoute.js';
 import cors from 'cors';
+import userRouter from './route/userRoute.js';
 dotenv.config();
 
 const app = express();
@@ -19,9 +20,9 @@ app.use(cors({
 
 app.use("/api/auth", authRouter);
 
-app.use((req, res) => {
-  res.send("Hello this server is running this is lms project")
-})
+app.use("/api/users",userRouter)
+
+
 app.listen(process.env.PORT, () => {
   console.log("Server is started at port", process.env.PORT)
   connectDb();

@@ -6,8 +6,12 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { serverURl } from '../utils/ServerUrl';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
-const Login = () => {
+import CircularProgress from '@mui/material/CircularProgress';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
+const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -20,19 +24,24 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("Success")
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
   const handleSubmit = async (e) => {
+
+    setLoading(true);
     try {
       if (!formData.email || !formData.password)
         return setMessage("All fields are required");
 
       e.preventDefault();
 
-      const res = await axios.post(`${serverURl}/api/auth/login`, formData, { withCredential: true });
-      console.log(res);
+      const res = await axios.post(`${serverURl}/api/auth/login`, formData, { withCredentials: true });
+
+      dispatch(setUserData(res.data.user));
 
       setFormData({
         email: "",
@@ -40,12 +49,15 @@ const Login = () => {
       })
       setMessage(res.data.message || "Login Success");
       setOpen(true);
-      setSeverity("success")
+      setSeverity("success");
+      navigate("/");
     } catch (error) {
       console.log(error)
       setMessage(error?.response?.data?.message || "Login failed!");
       setOpen(true);
       setSeverity("error")
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -97,7 +109,9 @@ const Login = () => {
             </div>
             <button className='w-[80%] bg-gray-700 text-white m-8 px-5 cursor-pointer rounded-md hover:bg-black p-2'
               onClick={handleSubmit}
-            >Login</button>
+            >
+              {loading ? <CircularProgress size={20} /> : "Login"}
+            </button>
 
 
           </div>

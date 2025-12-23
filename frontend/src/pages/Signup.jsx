@@ -7,10 +7,12 @@ import axios from 'axios'
 import { serverURl } from '../utils/ServerUrl';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
-
+import CircularProgress from '@mui/material/CircularProgress';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 const Signup = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,19 +24,22 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("Success")
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
   const handleSubmit = async (e) => {
+    setLoading(true)
     try {
       if (!formData.name || !formData.email || !formData.password || !formData.role)
         return alert("All fields are required");
 
       e.preventDefault();
 
-      const res = await axios.post(`${serverURl}/api/auth/signup`, formData, { withCredential: true });
-      console.log(res);
+      const res = await axios.post(`${serverURl}/api/auth/signup`, formData, { withCredentials: true });
+      dispatch(setUserData(res.data.user));
       setFormData({
         name: "",
         email: "",
@@ -49,6 +54,9 @@ const Signup = () => {
       setMessage(error?.response?.data?.message || "Signup failed!");
       setOpen(true);
       setSeverity("error")
+    }
+    finally {
+      setLoading(false);
     }
   }
   const navigate = useNavigate();
@@ -111,33 +119,25 @@ const Signup = () => {
 
 
             </div>
-
           </div>
+
           <div className='flex md:w-[50%] items-center justify-between py-6 gap-2' >
-
-            <Button
-              variant="gray"
-
-              className="h-7 p-1 cursor-pointer hover:!bg-gray-200 hover:!text-black"
-              onClick={() => setFormData({ ...formData, role: "student" })}
+            <span onClick={() => setFormData({ ...formData, role: "student" })}
+              className={`px-2 py-1 rounded-md border-2 cursor-pointer ${formData.role === "student" ? "bg-gray-300 text-black" : "hover:bg-gray-300"}`}
             >
               Student
-            </Button>
-
-            <Button
-              variant="gray"
-              className="h-7 p-1 cursor-pointer hover:!bg-gray-200 hover:!text-black"
-              onClick={() => setFormData({ ...formData, role: "teacher" })}
-            >
+            </span>
+            <span onClick={() => setFormData({ ...formData, role: "teacher" })}
+              className={`px-2 py-1 rounded-md border-2 cursor-pointer ${formData.role === "teacher" ? "bg-gray-300 text-black" : "hover:bg-gray-300"}`}>
               Teacher
-            </Button>
+            </span>
 
           </div>
           <div>
             already have an account
             <span className='cursor-pointer p-2 text-blue-400' onClick={() => navigate("/login")}>Login</span>
           </div>
-          <button onClick={handleSubmit} className='w-[80%] bg-gray-700 text-white m-8 px-5 cursor-pointer rounded-md hover:bg-black p-2'>Signup</button>
+          <button onClick={handleSubmit} className='w-[80%] bg-gray-700 text-white m-8 px-5 cursor-pointer rounded-md hover:bg-black p-2'>{loading ? <CircularProgress size={22} /> : "Signup"}</button>
 
 
         </div>
