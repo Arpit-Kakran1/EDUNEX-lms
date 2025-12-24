@@ -1,9 +1,13 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
 
 const Home = () => {
   return (
-    <div className='text-2xl text-blue-500'>
-      Home
+    <div className='w-[100%] overflow-hidden'>
+      <div className='w-[100%] lg:h-[140vh] h-[70vh] relative '>
+        <Navbar />
+      </div>
+
     </div>
   )
 }
