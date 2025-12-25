@@ -31,22 +31,23 @@ const Login = () => {
   }
 
   const handleSubmit = async (e) => {
-
+    e.preventDefault();
     setLoading(true);
     try {
       if (!formData.email || !formData.password)
         return setMessage("All fields are required");
 
-      e.preventDefault();
+
 
       const res = await axios.post(`${serverURl}/api/auth/login`, formData, { withCredentials: true });
-
+      console.log(res.data.user);
       dispatch(setUserData(res.data.user));
 
       setFormData({
         email: "",
         password: "",
       })
+
       setMessage(res.data.message || "Login Success");
       setOpen(true);
       setSeverity("success");
@@ -103,6 +104,10 @@ const Login = () => {
               </div>
             </div>
 
+            <div>
+              <span className='text-gray-600 cursor-pointer ' onClick={() => navigate("/forgetpassword")}>----Forget password----</span>
+            </div>
+
             <div className='m-5'>
               create new account
               <span className='cursor-pointer p-2 text-blue-400' onClick={() => navigate("/signup")}>Signup</span>
@@ -112,8 +117,6 @@ const Login = () => {
             >
               {loading ? <CircularProgress size={20} /> : "Login"}
             </button>
-
-
           </div>
 
           {/* Right Side div */}

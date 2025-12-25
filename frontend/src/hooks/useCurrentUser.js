@@ -10,7 +10,8 @@ const useCurrentUser = () => {
     try {
       const fetchUser = async () => {
         const res = await axios.get(`${serverURl}/api/users/me`,{withCredentials:true});
-        dispatch(setUserData(res.data));
+        // console.log(res.data.user);
+        dispatch(setUserData(res.data.user));
       }
       
       fetchUser();

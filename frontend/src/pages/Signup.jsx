@@ -131,8 +131,8 @@ const Signup = () => {
               className={`px-2 py-1 rounded-md border-2 cursor-pointer ${formData.role === "teacher" ? "bg-gray-300 text-black" : "hover:bg-gray-300"}`}>
               Teacher
             </span>
-
           </div>
+
           <div>
             already have an account
             <span className='cursor-pointer p-2 text-blue-400' onClick={() => navigate("/login")}>Login</span>
