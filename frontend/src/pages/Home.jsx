@@ -7,7 +7,6 @@ const Home = () => {
       <div className='w-[100%] lg:h-[140vh] h-[70vh] relative '>
         <Navbar />
       </div>
-
     </div>
   )
 }

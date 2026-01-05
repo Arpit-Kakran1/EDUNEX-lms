@@ -9,6 +9,7 @@ import { IoEye, IoEyeOff } from 'react-icons/io5';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -36,9 +37,6 @@ const Login = () => {
     try {
       if (!formData.email || !formData.password)
         return setMessage("All fields are required");
-
-
-
       const res = await axios.post(`${serverURl}/api/auth/login`, formData, { withCredentials: true });
       console.log(res.data.user);
       dispatch(setUserData(res.data.user));
@@ -108,15 +106,21 @@ const Login = () => {
               <span className='text-gray-600 cursor-pointer ' onClick={() => navigate("/forgetpassword")}>----Forget password----</span>
             </div>
 
-            <div className='m-5'>
+            <div className='m-2'>
               create new account
               <span className='cursor-pointer p-2 text-blue-400' onClick={() => navigate("/signup")}>Signup</span>
             </div>
-            <button className='w-[80%] bg-gray-700 text-white m-8 px-5 cursor-pointer rounded-md hover:bg-black p-2'
+            <button className='w-[80%] bg-gray-700 text-white  px-5 cursor-pointer rounded-md hover:bg-black m-1 py-1'
               onClick={handleSubmit}
             >
               {loading ? <CircularProgress size={20} /> : "Login"}
             </button>
+            <div>
+              <h2 className='text-center m-2 text-semidbold '>-----Or Continue----</h2>
+              <button className='border-2 border-black bg-gray-700 text-white rounded-md flex items-center justify-center gap-2 my-4 p-1 cursor-pointer'>
+                <FcGoogle />Sign in with Google
+              </button>
+            </div>
           </div>
 
           {/* Right Side div */}

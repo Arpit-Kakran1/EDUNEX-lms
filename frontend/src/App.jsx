@@ -8,12 +8,18 @@ import Profile from './pages/Profile'
 import MyCourses from './pages/MyCourses'
 import ForgetPasssword from './pages/ForgetPasssword'
 import { useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
 
 const App = () => {
   useCurrentUser();
   const { user } = useSelector(state => state.user);
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        pauseOnHover
+      />
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/signup" element={<Signup />}></Route>

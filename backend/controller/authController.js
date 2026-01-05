@@ -4,6 +4,7 @@ import validator from 'validator';
 import genToken from '../config/token.js';
 import bcrypt from 'bcryptjs';
 import cookieParser from 'cookie-parser';
+import sendEmail from '../config/sendEmail.js';
 
 export const signUp = async (req,res) => {
   try {
@@ -132,5 +133,100 @@ path:"/",
     return res.status(500).json({
       message:`Logout error ${error}`
     })
+  }
+}
+
+export const sendOTP = async (req,res) => {
+  try {
+    const {email} = req.body;
+    const user =await User.findOne({ email });
+    if (!user) {
+     return res.status(400).json({
+        message:"No user registered with this email"
+      })
+    };
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    user.resetOtp = otp;
+    user.otpExpires = Date.now() + 5 * 60 * 1000;
+    
+    user.isOtpValid = false;
+    await user.save();
+
+    await sendEmail(email, otp);
+    
+    return res.status(200).json({ message:"Otp send succesfully"})
+  } catch (error) {
+    return res.status(500).json({ message: `Error in sending otp ${error}` });
+  }
+}
+
+export const verifyOtp = async (req,res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+     return res.status(400).json({
+        message:"User not found"
+      })
+    };
+
+    if (!user.resetOtp) {
+  return res.status(400).json({
+    message: "OTP not generated"
+  });
+}
+
+
+if (user.otpExpires < Date.now()) {
+  return res.status(400).json({
+    message: "OTP expired"
+  });
+    }
+    
+    if (user.resetOtp !== otp) {
+   res.status(400).json({
+    message: "OTP not valid"
+  });
+}
+     
+    user.isOtpValid = true;
+    user.resetOtp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+return res.status(200).json({message:"Otp Verified Succesfully"})
+  } catch (error) {
+     return res.status(500).json({ message: `Verify Otp error ${error}`});
+  }
+}
+
+export const resetPassword= async (req,res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+     return res.status(400).json({
+        message:"No user found"
+      })
+    };
+
+    if (!user.isOtpValid) {
+      return res.status(400).json({
+        message:"Otp verification is required"
+      })
+    }
+
+    const newPassword = await bcrypt.hash(password, 10);
+    user.password = newPassword;
+    user.isOtpValid = false;
+
+    await user.save();
+    
+    return res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: `Error in reseting password ${error}`});
   }
 }

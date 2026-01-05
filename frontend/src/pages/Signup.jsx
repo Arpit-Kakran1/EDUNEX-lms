@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import logo from '../assets/logo.png'
 import { IoEye, IoEyeOff, IoEyeOffOutline } from "react-icons/io5";
-import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { serverURl } from '../utils/ServerUrl';
@@ -18,12 +17,12 @@ const Signup = () => {
     email: "",
     password: "",
     role: ""
-  })
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("Success")
-
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -59,6 +58,7 @@ const Signup = () => {
       setLoading(false);
     }
   }
+
   const navigate = useNavigate();
 
   return (
@@ -98,7 +98,6 @@ const Signup = () => {
             </div>
 
             <div className=' flex flex-col gap-2 justify-start m-2'>
-
               <label className='text-black text-md'>Password</label>
               <div className='relative'>
                 <input type={showPassword ? "text" : "password"}
@@ -116,8 +115,6 @@ const Signup = () => {
                   {showPassword ? < IoEye /> : <IoEyeOff />}
                 </span>
               </div>
-
-
             </div>
           </div>
 
@@ -138,8 +135,6 @@ const Signup = () => {
             <span className='cursor-pointer p-2 text-blue-400' onClick={() => navigate("/login")}>Login</span>
           </div>
           <button onClick={handleSubmit} className='w-[80%] bg-gray-700 text-white m-8 px-5 cursor-pointer rounded-md hover:bg-black p-2'>{loading ? <CircularProgress size={22} /> : "Signup"}</button>
-
-
         </div>
 
         {/* Right Side div */}
